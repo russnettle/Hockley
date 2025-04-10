@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planning Objection Email Helper</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    label, select, input, textarea { display: block; margin-top: 1rem; width: 100%; }
+    button { margin-top: 2rem; padding: 0.5rem 1rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Object to Planning Proposal</h1>
+  <p>Fill in your details and concerns below. A template email will be created for you.</p>
+
+  <label>Name:
+    <input type="text" id="name" placeholder="Your name">
+  </label>
+
+  <label>Concern type:
+    <select id="concern">
+      <option value="traffic">Traffic and Road Safety</option>
+      <option value="infrastructure">Lack of Infrastructure</option>
+      <option value="environment">Environmental Impact</option>
+      <option value="heritage">Heritage & Landscape</option>
+    </select>
+  </label>
+
+  <label>
+    Are you a resident?
+    <input type="radio" name="resident" value="yes" checked> Yes
+    <input type="radio" name="resident" value="no"> No
+  </label>
+
+  <label>Additional comments:
+    <textarea id="extra" rows="4" placeholder="Any other thoughts..."></textarea>
+  </label>
+
+  <button onclick="generateEmail()">Generate Email</button>
+
+  <h2>Your Email</h2>
+  <textarea id="emailOutput" rows="10"></textarea>
+  <button onclick="copyEmail()">Copy to Clipboard</button>
+
+  <script>
+    function generateEmail() {
+      const name = document.getElementById('name').value;
+      const concern = document.getElementById('concern').value;
+      const extra = document.getElementById('extra').value;
+      const resident = document.querySelector('input[name="resident"]:checked').value;
+
+      let concernText = {
+        traffic: "I am concerned about increased traffic and road safety risks.",
+        infrastructure: "There is insufficient infrastructure (schools, healthcare, transport) to support this development.",
+        environment: "This development threatens local biodiversity and green spaces.",
+        heritage: "The proposal risks damaging the village's historical and rural character."
+      }[concern];
+
+      const message = `Dear Councillors,
+
+My name is ${name || '[Your Name Here]'} and I ${resident === 'yes' ? 'live in the village' : 'have an interest in the area'}.
+
+${concernText}
+
+${extra ? 'Additional comments: ' + extra : ''}
+
+Please consider the long-term impact of this development on our community.
+
+Kind regards,
+${name || '[Your Name Here]'}`;
+
+      document.getElementById('emailOutput').value = message;
+    }
+
+    function copyEmail() {
+      const text = document.getElementById('emailOutput');
+      text.select();
+      document.execCommand('copy');
+      alert("Email copied to clipboard.");
+    }
+  </script>
+</body>
+</html>
