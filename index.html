@@ -1,3 +1,6 @@
+---
+layout: default
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,7 +118,7 @@
           },
           body: JSON.stringify({
             emailData: { 
-              text: `Please generate a concise letter of objection to planning application 25/00106/EIA in Hockley, based on the following concerns from a resident named ${name} living at or near postcode ${postcode}: ${points}. The letter should be suitable for copying and pasting into an email to local councillors. Ensure the letter includes the resident's name and address/postcode clearly. Do not include any additional commentary, suggestions, or introductory/closing remarks beyond the formal letter itself.` 
+              text: `Please generate a letter of objection to planning application 25/00106/EIA in Hockley, based on the following concerns from a resident named ${name} living at or near postcode ${postcode}: ${points}. The letter should be suitable for copying and pasting into an email to local councillors. Ensure the letter includes the resident's name and address/postcode clearly. Do not include any additional commentary, suggestions, or introductory/closing remarks beyond the formal letter itself. You can include relevant information inorder that does not seem like a standard bullet point list of the points raised. But DO NOT include suggestions or places for to add detail. If info is missing, ignore it, do not commentate on where it should be added` 
                        }
           })
         });
