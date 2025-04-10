@@ -44,7 +44,7 @@
 </head>
 <body>
 
-  <h1>1Object to Planning Application 25/00106/EIA</h1>
+  <h1>2Object to Planning Application 25/00106/EIA</h1>
   <p>
     Hockley is facing another large development proposal. Many residents are concerned, but may not find the time to write an objection email.
     Use this simple form to generate a tailored email based on the concerns you wish to raise.
@@ -103,7 +103,7 @@
       if (concerns.includes("pollution")) points += "- Pollution levels are already moderate and may worsen due to construction and traffic.\n";
       if (concerns.includes("infrastructure")) points += "- There is a lack of infrastructure to support the proposed expansion, from public transport to utilities.\n";
 
-      const email = `Dear Councillor,\n\nI am writing to formally object to the proposed planning application in Hockley.\n\nAs a resident living in ${postcode}, I have serious concerns about the impact this development will have on our community:\n\n${points}\nI urge you to consider these impacts and reject the application.\n\nYours sincerely,\n${name}`;
+       const email = `Dear Councillor,\n\nI am writing to formally object to the proposed planning application 25/00106/EIA in Hockley.\n\nAs a resident living in ${postcode}, I have serious concerns about the impact this development will have on our community:\n\n${points}\nI urge you to consider these significant impacts and reject this application.\n\nYours sincerely,\n${name}`;
 
       const apiUrl = "https://v0-new-project-gvk70ardgcd-git-main-russ-freemans-projects.vercel.app/api/gemini"; // Replace with actual URL
 
@@ -114,7 +114,9 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            emailData: { text: email }
+            emailData: { 
+              text: `Please generate a concise letter of objection to planning application 25/00106/EIA in Hockley, based on the following concerns from a resident named ${name} living at or near postcode ${postcode}: ${points}. The letter should be suitable for copying and pasting into an email to local councillors. Ensure the letter includes the resident's name and address/postcode clearly. Do not include any additional commentary, suggestions, or introductory/closing remarks beyond the formal letter itself.` 
+                       }
           })
         });
 
