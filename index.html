@@ -1,7 +1,3 @@
----
-layout: default
----
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,13 +71,14 @@ layout: default
   </div>
 
   <script>
-    document.getElementById('objection-form').addEventListener('submit', function(e) {
+    document.getElementById('objection-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const name = document.getElementById('name').value.trim();
       const postcode = document.getElementById('postcode').value.trim();
       const concerns = Array.from(document.querySelectorAll('input[name="concern"]:checked')).map(cb => cb.value);
 
+      // Create a formatted string based on selected concerns
       let points = "";
       if (concerns.includes("traffic")) points += "- The area already suffers from serious traffic congestion and was recently nicknamed 'Blockley' due to constant gridlock.\n";
       if (concerns.includes("doctors")) points += "- Local GP surgeries are overstretched, and additional housing will worsen access to care.\n";
@@ -91,14 +88,34 @@ layout: default
 
       const email = `Dear Councillor,\n\nI am writing to formally object to the proposed planning application in Hockley.\n\nAs a resident living in ${postcode}, I have serious concerns about the impact this development will have on our community:\n\n${points}\nI urge you to consider these impacts and reject the application.\n\nYours sincerely,\n${name}`;
 
-      document.getElementById('email-output').style.display = 'block';
-      document.getElementById('email-text').value = email;
+      // Now send this data to the backend to generate a response using fetch
+      try {
+        const response = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            emailData: { text: email }
+          })
+        });
 
-      const subject = encodeURIComponent("Objection to Planning Application 25/00106/EIA - Mount Bovers");
-      const body = encodeURIComponent(email);
-      const mailto = `mailto:CllrMike.Steptoe@rochford.gov.uk,CllrArthur.Williams@rochford.gov.uk,CllrAngelina.Marriott@rochford.gov.uk?subject=${subject}&body=${body}`;
+        const result = await response.json();
 
-      document.getElementById('mailto-link').href = mailto;
+        // Assuming result contains the generated email response, you can update the email textarea
+        document.getElementById('email-output').style.display = 'block';
+        document.getElementById('email-text').value = result.generatedEmail; // Assuming this is the response field
+
+        // Set up the mailto link
+        const subject = encodeURIComponent("Objection to Planning Application 25/00106/EIA - Mount Bovers");
+        const body = encodeURIComponent(result.generatedEmail); // Use the generated email content
+        const mailto = `mailto:CllrMike.Steptoe@rochford.gov.uk,CllrArthur.Williams@rochford.gov.uk,CllrAngelina.Marriott@rochford.gov.uk?subject=${subject}&body=${body}`;
+
+        document.getElementById('mailto-link').href = mailto;
+      } catch (error) {
+        console.error('Error generating email:', error);
+        alert('There was an error generating the email.');
+      }
     });
   </script>
 
