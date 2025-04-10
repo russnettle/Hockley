@@ -88,9 +88,12 @@
 
       const email = `Dear Councillor,\n\nI am writing to formally object to the proposed planning application in Hockley.\n\nAs a resident living in ${postcode}, I have serious concerns about the impact this development will have on our community:\n\n${points}\nI urge you to consider these impacts and reject the application.\n\nYours sincerely,\n${name}`;
 
+      // Replace with your full backend URL (e.g., Vercel URL or the domain where your backend is hosted)
+      const apiUrl = "https://v0-new-project-gvk70ardgcd-git-main-russ-freemans-projects.vercel.app/api/gemini"; // Replace with actual URL
+
       // Now send this data to the backend to generate a response using fetch
       try {
-        const response = await fetch('https://v0-new-project-gvk70ardgcd-git-main-russ-freemans-projects.vercel.app/api/gemini', {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
