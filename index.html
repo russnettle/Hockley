@@ -5,85 +5,102 @@ layout: default
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Planning Objection Email Helper</title>
+  <meta charset="UTF-8">
+  <title>Hockley Planning Objection Helper</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    label, select, input, textarea { display: block; margin-top: 1rem; width: 100%; }
-    button { margin-top: 2rem; padding: 0.5rem 1rem; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      max-width: 700px;
+    }
+    label, input, textarea {
+      display: block;
+      margin-top: 1rem;
+    }
+    fieldset {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+    }
+    #mailto-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      color: #0645AD;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Object to Planning Proposal</h1>
-  <p>Fill in your details and concerns below. A template email will be created for you.</p>
+  <h1>Object to Planning Application 25/00106/EIA</h1>
+  <p>
+    Hockley is facing another large development proposal. Many residents are concerned, but may not find the time to write an objection email.
+    Use this simple form to generate a tailored email based on the concerns you wish to raise.
+  </p>
 
-  <label>Name:
-    <input type="text" id="name" placeholder="Your name">
-  </label>
+  <form id="objection-form">
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" required>
 
-  <label>Concern type:
-    <select id="concern">
-      <option value="traffic">Traffic and Road Safety</option>
-      <option value="infrastructure">Lack of Infrastructure</option>
-      <option value="environment">Environmental Impact</option>
-      <option value="heritage">Heritage & Landscape</option>
-    </select>
-  </label>
+    <label for="postcode">Your Address/Postcode:</label>
+    <input type="text" id="postcode" required>
 
-  <label>
-    Are you a resident?
-    <input type="radio" name="resident" value="yes" checked> Yes
-    <input type="radio" name="resident" value="no"> No
-  </label>
+    <fieldset>
+      <legend>Select your key concerns:</legend>
+      <label><input type="checkbox" name="concern" value="traffic"> Traffic congestion / 'Blockley' gridlock</label>
+      <label><input type="checkbox" name="concern" value="doctors"> Overstretched local doctors surgeries</label>
+      <label><input type="checkbox" name="concern" value="schools"> Overcrowded schools</label>
+      <label><input type="checkbox" name="concern" value="pollution"> Air pollution and environmental impact</label>
+      <label><input type="checkbox" name="concern" value="infrastructure"> Lack of supporting infrastructure</label>
+    </fieldset>
 
-  <label>Additional comments:
-    <textarea id="extra" rows="4" placeholder="Any other thoughts..."></textarea>
-  </label>
+    <button type="submit">Generate Email</button>
+  </form>
 
-  <button onclick="generateEmail()">Generate Email</button>
+  <div id="email-output" style="margin-top:2rem; display:none;">
+    <h2>Suggested Email</h2>
+    <textarea id="email-text" rows="12" style="width:100%;"></textarea>
 
-  <h2>Your Email</h2>
-  <textarea id="emailOutput" rows="10"></textarea>
-  <button onclick="copyEmail()">Copy to Clipboard</button>
+    <p>
+      <a id="mailto-link" href="#" target="_blank">
+        📧 Click here to open your email app and send
+      </a>
+    </p>
+  </div>
 
   <script>
-    function generateEmail() {
-      const name = document.getElementById('name').value;
-      const concern = document.getElementById('concern').value;
-      const extra = document.getElementById('extra').value;
-      const resident = document.querySelector('input[name="resident"]:checked').value;
+    document.getElementById('objection-form').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-      let concernText = {
-        traffic: "I am concerned about increased traffic and road safety risks.",
-        infrastructure: "There is insufficient infrastructure (schools, healthcare, transport) to support this development.",
-        environment: "This development threatens local biodiversity and green spaces.",
-        heritage: "The proposal risks damaging the village's historical and rural character."
-      }[concern];
+      const name = document.getElementById('name').value.trim();
+      const postcode = document.getElementById('postcode').value.trim();
+      const concerns = Array.from(document.querySelectorAll('input[name="concern"]:checked')).map(cb => cb.value);
 
-      const message = `Dear Councillors,
+      let points = "";
+      if (concerns.includes("traffic")) points += "- The area already suffers from serious traffic congestion and was recently nicknamed 'Blockley' due to constant gridlock.\n";
+      if (concerns.includes("doctors")) points += "- Local GP surgeries are overstretched, and additional housing will worsen access to care.\n";
+      if (concerns.includes("schools")) points += "- Schools in the area are already full, and new developments will overwhelm them.\n";
+      if (concerns.includes("pollution")) points += "- Pollution levels are already moderate and may worsen due to construction and traffic.\n";
+      if (concerns.includes("infrastructure")) points += "- There is a lack of infrastructure to support the proposed expansion, from public transport to utilities.\n";
 
-My name is ${name || '[Your Name Here]'} and I ${resident === 'yes' ? 'live in the village' : 'have an interest in the area'}.
+      const email = `Dear Councillor,\n\nI am writing to formally object to the proposed planning application in Hockley.\n\nAs a resident living in ${postcode}, I have serious concerns about the impact this development will have on our community:\n\n${points}\nI urge you to consider these impacts and reject the application.\n\nYours sincerely,\n${name}`;
 
-${concernText}
+      document.getElementById('email-output').style.display = 'block';
+      document.getElementById('email-text').value = email;
 
-${extra ? 'Additional comments: ' + extra : ''}
+      const subject = encodeURIComponent("Objection to Planning Application 25/00106/EIA - Mount Bovers");
+      const body = encodeURIComponent(email);
+      const mailto = `mailto:CllrMike.Steptoe@rochford.gov.uk,CllrArthur.Williams@rochford.gov.uk,CllrAngelina.Marriott@rochford.gov.uk?subject=${subject}&body=${body}`;
 
-Please consider the long-term impact of this development on our community.
-
-Kind regards,
-${name || '[Your Name Here]'}`;
-
-      document.getElementById('emailOutput').value = message;
-    }
-
-    function copyEmail() {
-      const text = document.getElementById('emailOutput');
-      text.select();
-      document.execCommand('copy');
-      alert("Email copied to clipboard.");
-    }
+      document.getElementById('mailto-link').href = mailto;
+    });
   </script>
+
 </body>
 </html>
